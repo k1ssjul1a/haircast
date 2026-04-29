@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'app/components/bottom_navbar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'app/components/bottom_navbar.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); // Verbindet Flutter mit der Plattform (IOS bzw. Android)
+  await Firebase.initializeApp( //Verbindung mit FireBase-Projekt wird hergestellt
+      options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

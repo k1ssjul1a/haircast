@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "211504171008",
+    "project_id": "sad-hair-app",
+    "storage_bucket": "sad-hair-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:211504171008:android:cc284d9262a12060e4b0e5",
+        "android_client_info": {
+          "package_name": "com.example.haircast"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD72YIqmSF0M3RcOo6cEKkFsySHAwXqvLM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
