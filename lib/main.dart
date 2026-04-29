@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app/components/bottom_navbar.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'app/components/bottom_navbar.dart';
 import 'firebase_options.dart';
 
 void main() async {
