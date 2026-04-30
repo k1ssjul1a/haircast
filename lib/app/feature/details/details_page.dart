@@ -16,9 +16,9 @@ class DetailsPage extends StatelessWidget {
       body: const SingleChildScrollView(
         child: Column(
           children: [
-            Achievements(),
-            CalendarOverview(),
             Calendar(),
+            Achievements(),
+            //CalendarOverview(),
           ],
         ),
       ),
