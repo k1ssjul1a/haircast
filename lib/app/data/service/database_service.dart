@@ -4,10 +4,12 @@ import '../user_model.dart';
 class DatabaseService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
+  // Benutzerdaten speichern oder aktualisieren
   Future<void> saveUser(UserModel user) async {
     await _db.collection('users').doc(user.id).set(user.toMap());
   }
 
+  // Benutzerdaten abrufen
   Future<UserModel?> getUser(String uid) async {
     var snapshot = await _db.collection('users').doc(uid).get();
     if (snapshot.exists) {
