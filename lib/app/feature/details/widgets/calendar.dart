@@ -46,6 +46,16 @@ class _CalendarState extends State<Calendar> {
         // No need to call `setState()` here
         _focusedDay = focusedDay;
       },
+      calendarStyle: CalendarStyle(
+        selectedDecoration: BoxDecoration(
+          color: Colors.teal[200],
+          shape: BoxShape.circle,
+        ),
+        todayDecoration: BoxDecoration(
+          color: Colors.teal[200]?.withOpacity(0.5),
+          shape: BoxShape.circle,
+        )
+      ),
     );
   }
 }
