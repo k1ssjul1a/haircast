@@ -13,7 +13,7 @@ class HaircastCard extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, xyz
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               // Title row
               Row(
