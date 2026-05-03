@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'widgets/achievements.dart';
-import 'widgets/calendar_overview.dart';
 import 'widgets/calendar.dart';
 
 class DetailsPage extends StatelessWidget {
