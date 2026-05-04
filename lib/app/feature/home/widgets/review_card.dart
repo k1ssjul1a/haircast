@@ -43,7 +43,7 @@ class _ReviewCardState extends State<ReviewCard> {
               Slider(
                 value: _currentSliderValue,
                 max: 5,
-                divisions: 4,
+                divisions: 5,
                 label: _currentSliderValue.round().toString(),
                 activeColor: Colors.teal[200],
                 onChanged: (double value) {
