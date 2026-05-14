@@ -21,13 +21,25 @@ class UserInfos extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               const Text(
-                "User Example",
+                "Jane Doe",
                 style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 4),
               Text(
                 "Curly Hair (Type 3A)",
                 style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.location_on, size: 16, color: Colors.teal),
+                  const SizedBox(width: 4),
+                  Text(
+                    "Berlin, Germany",
+                    style: TextStyle(fontSize: 14, color: Colors.teal[700]),
+                  ),
+                ],
               ),
               const SizedBox(height: 16),
               const Divider(),

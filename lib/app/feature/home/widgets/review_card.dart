@@ -111,7 +111,11 @@ class _ReviewCardState extends State<ReviewCard> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Review saved locally!")),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.teal[200],
                     foregroundColor: Colors.white,

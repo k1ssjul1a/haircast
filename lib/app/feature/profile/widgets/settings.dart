@@ -32,17 +32,22 @@ class Settings extends StatelessWidget {
                 onTap: () {},
               ),
               _SettingsTile(
+                icon: Icons.location_on_outlined,
+                label: "Location (City)",
+                onTap: () {},
+              ),
+              _SettingsTile(
                 icon: Icons.email_outlined,
                 label: "Email or Phone Number",
                 onTap: () {},
               ),
               _SettingsTile(
-                icon: Icons.face_2_rounded, // Using a generic icon if hairdressing isn't available
+                icon: Icons.face_2_rounded,
                 label: "Hair Type",
                 onTap: () {},
               ),
               _SettingsTile(
-                icon: Icons.calendar_month, // Placeholder for wash cycle
+                icon: Icons.calendar_month,
                 label: "Hairwash Cycle Days",
                 onTap: () {},
               ),
@@ -61,7 +66,7 @@ class Settings extends StatelessWidget {
               ),
               _SettingsTile(
                 icon: Icons.help_outline,
-                label: "Help Section",
+                label: "How it works",
                 onTap: () {},
               ),
               _SettingsTile(
