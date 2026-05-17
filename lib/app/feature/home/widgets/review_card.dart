@@ -69,7 +69,7 @@ class _ReviewCardState extends State<ReviewCard> {
                     const SizedBox(height: 16),
                     const Text("Hairstyle", style: TextStyle(fontWeight: FontWeight.bold)),
                     DropdownButtonFormField<String>(
-                      value: _selectedHairstyle,
+                      initialValue: _selectedHairstyle,
                       dropdownColor: Colors.white,
                       decoration: InputDecoration(
                         filled: true,
