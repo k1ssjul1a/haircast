@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
         //title: const Text("Hello [user]")
       ),
       body: const SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: 120), // Added padding to prevent navbar covering content
         child: Column(
           children: [
             HaircastCard(),

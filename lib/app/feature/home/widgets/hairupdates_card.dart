@@ -13,76 +13,64 @@ class _HairupdatesCardState extends State<HairupdatesCard> {
   bool _changedColor = false;
   final int _daysSinceWash = 2; // Dummy data
 
+  final Color _lightGrey = const Color(0xFFE5DFE6);
+  final Color _pastelPurple = const Color(0xFFBA99EA);
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        color: _lightGrey,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Row(
                 children: [
-                  Icon(Icons.update, color: Colors.teal),
-                  SizedBox(width: 8),
+                  Icon(Icons.update, color: Colors.black, size: 28),
+                  SizedBox(width: 12),
                   Text(
                     "Hair Updates",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.black),
                   ),
                 ],
               ),
-              const Divider(),
-              const SizedBox(height: 8),
+              const SizedBox(height: 24),
               
-              //Text(
-              //  "Info: $_daysSinceWash day(s) since your last hairwash",
-              //  style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
-              //),
-              //const SizedBox(height: 12),
-
-              CheckboxListTile(
-                title: const Text("I washed my hair today"),
-                value: _washedToday,
-                activeColor: Colors.teal[200],
-                contentPadding: EdgeInsets.zero,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _washedToday = value ?? false;
-                  });
-                },
-              ),
-              CheckboxListTile(
-                title: const Text("I got a new haircut"),
-                value: _newHaircut,
-                activeColor: Colors.teal[200],
-                contentPadding: EdgeInsets.zero,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _newHaircut = value ?? false;
-                  });
-                },
-              ),
-              CheckboxListTile(
-                title: const Text("I changed my hair color"),
-                value: _changedColor,
-                activeColor: Colors.teal[200],
-                contentPadding: EdgeInsets.zero,
-                onChanged: (bool? value) {
-                  setState(() {
-                    _changedColor = value ?? false;
-                  });
-                },
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+                  children: [
+                    _buildCheckbox("I washed my hair today", _washedToday, (val) {
+                      setState(() => _washedToday = val!);
+                    }),
+                    _buildCheckbox("I got a new haircut", _newHaircut, (val) {
+                      setState(() => _newHaircut = val!);
+                    }),
+                    _buildCheckbox("I changed my hair color", _changedColor, (val) {
+                      setState(() => _changedColor = val!);
+                    }),
+                  ],
+                ),
               ),
               
-              const SizedBox(height: 8),
-              const TextField(
+              const SizedBox(height: 16),
+              
+              TextField(
                 decoration: InputDecoration(
                   labelText: "Additional notes",
-                  border: OutlineInputBorder(),
+                  labelStyle: const TextStyle(color: Colors.black54),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 16),
@@ -92,16 +80,31 @@ class _HairupdatesCardState extends State<HairupdatesCard> {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal[200],
+                    backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
                   ),
-                  child: const Text("Save Updates"),
+                  child: const Text("Save Updates", style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCheckbox(String title, bool value, Function(bool?) onChanged) {
+    return CheckboxListTile(
+      title: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black)),
+      value: value,
+      activeColor: Colors.black,
+      checkColor: Colors.white,
+      contentPadding: EdgeInsets.zero,
+      dense: true,
+      onChanged: onChanged,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     );
   }
 }

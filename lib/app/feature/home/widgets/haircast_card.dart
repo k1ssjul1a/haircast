@@ -20,6 +20,9 @@ class _HaircastCardState extends State<HaircastCard> {
   bool _isSunny = false;
   String _error = "";
 
+  // Pastel colors based on description
+  final Color _pastelPurple = const Color(0xFFBA99EA);
+
   final List<String> _notes = [
     "\"Your hair looks so good today, even the wind is jealous!\"",
     "\"Hair today, fabulous tomorrow!\"",
@@ -43,7 +46,6 @@ class _HaircastCardState extends State<HaircastCard> {
     });
 
     try {
-      // 1. Geocoding: Get coordinates for the city
       final geoUrl = Uri.parse(
           'https://geocoding-api.open-meteo.com/v1/search?name=$_city&count=1&language=en&format=json');
       final geoResponse = await http.get(geoUrl);
@@ -54,7 +56,6 @@ class _HaircastCardState extends State<HaircastCard> {
           final lat = geoData['results'][0]['latitude'];
           final lon = geoData['results'][0]['longitude'];
 
-          // 2. Weather: Get weather data using coordinates
           final weatherUrl = Uri.parse(
               'https://api.open-meteo.com/v1/forecast?latitude=$lat&longitude=$lon&current=temperature_2m,relative_humidity_2m,rain,showers,snowfall,wind_speed_10m,weather_code');
           final weatherResponse = await http.get(weatherUrl);
@@ -68,7 +69,6 @@ class _HaircastCardState extends State<HaircastCard> {
               _windSpeed = current['wind_speed_10m'];
               _humidity = current['relative_humidity_2m'];
               _rain = current['rain'] + current['showers'] + current['snowfall'];
-              // Simple logic for "Sunny": clear sky (0) or mainly clear (1)
               _isSunny = current['weather_code'] <= 1;
               _isLoading = false;
             });
@@ -94,15 +94,22 @@ class _HaircastCardState extends State<HaircastCard> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Change Location"),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text("Change Location", style: TextStyle(color: Colors.black)),
         content: TextField(
           onChanged: (value) => newCity = value,
-          decoration: const InputDecoration(hintText: "Enter city name"),
+          style: const TextStyle(color: Colors.black),
+          decoration: InputDecoration(
+            hintText: "Enter city name",
+            filled: true,
+            fillColor: Colors.grey[100],
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
@@ -112,7 +119,7 @@ class _HaircastCardState extends State<HaircastCard> {
               Navigator.pop(context);
               _fetchWeatherData();
             },
-            child: const Text("OK"),
+            child: const Text("OK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -122,129 +129,110 @@ class _HaircastCardState extends State<HaircastCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        color: _pastelPurple, // Using one of the 4 pastel colors for the card background
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Icon(Icons.auto_awesome_rounded, color: Colors.teal),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.auto_awesome_rounded, color: Colors.black, size: 28),
+                  const SizedBox(width: 12),
                   const Text(
                     "Today's Haircast",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.black),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 8),
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton.icon(
-                        onPressed: _showLocationDialog,
-                        icon: const Icon(Icons.location_on, size: 16, color: Colors.teal),
-                        label: Flexible(
-                          child: Text(
-                            _city,
-                            style: const TextStyle(color: Colors.teal),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                          ),
+                    child: GestureDetector(
+                      onTap: _showLocationDialog,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.location_on, size: 14, color: Colors.black),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                _city,
+                                style: const TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-              const Divider(),
-              const SizedBox(height: 8),
+              const SizedBox(height: 24),
               if (_isLoading)
-                const Center(child: CircularProgressIndicator())
+                const Center(child: CircularProgressIndicator(color: Colors.black))
               else if (_error.isNotEmpty)
-                Center(
+                Center(child: Text("Error fetching data", style: TextStyle(color: Colors.black.withOpacity(0.5))))
+              else ...[
+                // Weather Box
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                   child: Column(
                     children: [
-                      const Icon(Icons.error_outline, color: Colors.red),
-                      Text("Error: $_error"),
-                      TextButton(onPressed: _fetchWeatherData, child: const Text("Retry"))
+                      _FactorRow(icon: Icons.water_drop_outlined, label: "Humidity", value: "${_humidity ?? '--'}%"),
+                      _FactorRow(icon: Icons.air_outlined, label: "Wind", value: "${_windSpeed ?? '--'} km/h"),
+                      _FactorRow(icon: Icons.umbrella_outlined, label: "Rain", value: _rain! > 0 ? "${_rain!.toStringAsFixed(1)} mm" : "None"),
+                      _FactorRow(icon: Icons.wb_sunny_outlined, label: "Sun", value: _isSunny ? "Sunny" : "Cloudy"),
                     ],
                   ),
-                )
-              else ...[
-                // Weather Factors
-                const Text(
-                  "Weather Factors:",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.teal),
                 ),
-                const SizedBox(height: 8),
-                _FactorRow(
-                    icon: Icons.water_drop_outlined,
-                    label: "Humidity",
-                    value: "${_humidity ?? '--'}%"),
-                _FactorRow(
-                    icon: Icons.air_outlined,
-                    label: "Wind",
-                    value: "${_windSpeed ?? '--'} km/h"),
-                _FactorRow(
-                    icon: Icons.umbrella_outlined,
-                    label: "Rain",
-                    value: _rain! > 0 ? "${_rain!.toStringAsFixed(1)} mm" : "None"),
-                _FactorRow(
-                    icon: Icons.wb_sunny_outlined,
-                    label: "Sun",
-                    value: _isSunny ? "Sunny" : "Cloudy/Other"),
-
-                const SizedBox(height: 12),
-
-                // Hair Factors
-                const Text(
-                  "Hair Factors:",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.teal),
-                ),
-                const SizedBox(height: 8),
-                const _FactorRow(
-                    icon: Icons.calendar_today_outlined, label: "Days since wash", value: "2 days"),
-
-                const Divider(),
-                const SizedBox(height: 8),
-
-                // Predicted Hair Score
-                Center(
+                const SizedBox(height: 16),
+                // Score Box
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
                   child: Column(
                     children: [
                       const Text(
-                        "Predicted Hair Score:",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        "Predicted Hair Score",
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
                       ),
-                      Text(
-                        "8/10", // Logic for calculation not required yet
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal[400],
-                        ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        "8/10",
+                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.black),
                       ),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
-                // Funny/Sweet Note
+                // Note Box
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(14),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.teal[50],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.teal[100]!),
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(24),
                   ),
                   child: Text(
                     _randomNote,
-                    style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.teal),
+                    style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.white, fontSize: 14),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -271,17 +259,25 @@ class _FactorRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Icon(icon, size: 20, color: Colors.grey[600]),
-          const SizedBox(width: 12),
-          Text(label, style: const TextStyle(fontSize: 15)),
-          const Spacer(),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(color: Colors.black.withOpacity(0.05), shape: BoxShape.circle),
+            child: Icon(icon, size: 18, color: Colors.black),
           ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w500),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(value, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
         ],
       ),
     );

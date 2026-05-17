@@ -12,115 +12,119 @@ class _ReviewCardState extends State<ReviewCard> {
   String? _selectedHairstyle;
   final List<String> _hairstyles = ['Down', 'Ponytail', 'Bun', 'Braids', 'Other'];
 
+  final Color _lightGrey = const Color(0xFFE5DFE6);
+  final Color _pastelPurple = const Color(0xFFBA99EA);
+
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        color: _lightGrey,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Row(
                 children: [
-                  Icon(Icons.rate_review_outlined, color: Colors.teal),
-                  SizedBox(width: 8),
+                  Icon(Icons.rate_review_outlined, color: Colors.black, size: 28),
+                  SizedBox(width: 12),
                   Text(
-                    "Today's Hair Review",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    "Hair Review",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.black),
                   ),
                 ],
               ),
-              const Divider(),
-              const SizedBox(height: 8),
+              const SizedBox(height: 24),
               
-              // Score Rating
-              Text("How do you rate your hair today? (${_currentSliderValue.toInt()}/5)",
-                  style: const TextStyle(fontWeight: FontWeight.w500)),
-              Slider(
-                value: _currentSliderValue,
-                max: 5,
-                divisions: 5,
-                label: _currentSliderValue.round().toString(),
-                activeColor: Colors.teal[200],
-                onChanged: (double value) {
-                  setState(() {
-                    _currentSliderValue = value;
-                  });
-                },
-              ),
-
-              // Hairstyle
-              const Text("Hairstyle", style: TextStyle(fontWeight: FontWeight.w500)),
-              DropdownButtonFormField<String>(
-                initialValue: _selectedHairstyle,
-                hint: const Text("Select hairstyle"),
-                items: _hairstyles.map((String style) {
-                  return DropdownMenuItem(
-                    value: style,
-                    child: Text(style),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedHairstyle = value;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Photo Upload Placeholder
-              const Text("Photo", style: TextStyle(fontWeight: FontWeight.w500)),
-              const SizedBox(height: 8),
               Container(
-                height: 100,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Hair Rating: ${_currentSliderValue.toInt()}/5",
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                    Slider(
+                      value: _currentSliderValue,
+                      min: 1,
+                      max: 5,
+                      divisions: 4,
+                      activeColor: _pastelPurple,
+                      inactiveColor: Colors.black12,
+                      onChanged: (double value) {
+                        setState(() {
+                          _currentSliderValue = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    const Text("Hairstyle", style: TextStyle(fontWeight: FontWeight.bold)),
+                    DropdownButtonFormField<String>(
+                      value: _selectedHairstyle,
+                      dropdownColor: Colors.white,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.grey[50],
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                      ),
+                      items: _hairstyles.map((String style) {
+                        return DropdownMenuItem(value: style, child: Text(style));
+                      }).toList(),
+                      onChanged: (value) => setState(() => _selectedHairstyle = value),
+                    ),
+                  ],
+                ),
+              ),
+              
+              const SizedBox(height: 16),
+              
+              const Text("Photo", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+              const SizedBox(height: 6),
+              Container(
+                height: 120,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey[400]!),
+                  color: Colors.white.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.black.withOpacity(0.05)),
                 ),
-                child: const Icon(Icons.add_a_photo_outlined, color: Colors.grey, size: 40),
+                child: const Icon(Icons.add_a_photo_outlined, color: Colors.black54, size: 40),
               ),
+              
               const SizedBox(height: 16),
-
-              // Hair Products
-              const TextField(
+              
+              TextField(
                 decoration: InputDecoration(
-                  labelText: "Hair products used",
-                  hintText: "e.g., Shampoo, Conditioner, Oil",
-                  border: OutlineInputBorder(),
+                  labelText: "Products used",
+                  labelStyle: const TextStyle(color: Colors.black54),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                 ),
               ),
               const SizedBox(height: 16),
-
-              // Additional Notes
-              const TextField(
-                maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: "Additional notes",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              // Save Button
+              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Review saved locally!")),
-                    );
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal[200],
+                    backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text("Save Review"),
+                  child: const Text("Save Review", style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
