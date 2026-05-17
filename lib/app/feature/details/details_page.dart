@@ -13,10 +13,11 @@ class DetailsPage extends StatelessWidget {
         //title: const Text("Hello [user]")
       ),
       body: const SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: 120),
         child: Column(
           children: [
             Calendar(),
-            Achievements(),
+            Achievements()
             //CalendarOverview(),
           ],
         ),

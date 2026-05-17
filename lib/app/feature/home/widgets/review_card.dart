@@ -117,7 +117,7 @@ class _ReviewCardState extends State<ReviewCard> {
                     ),
 
                     DropdownButtonFormField<String>(
-                      value: _selectedHairstyle,
+                      initialValue: _selectedHairstyle,
                       dropdownColor: Colors.white,
                       decoration: InputDecoration(
                         filled: true,
