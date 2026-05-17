@@ -23,29 +23,53 @@ class _BottomNavbarState extends State<BottomNavbar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[currentPageIndex], // 👈 renders the selected page
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          setState(() {
-            currentPageIndex = index;
-          });
-        },
-        indicatorColor: Colors.teal,
-        selectedIndex: currentPageIndex,
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_filled),
-            label: 'Home',
+      extendBody: true, // Allows content to be visible behind the floating navbar
+      body: _pages[currentPageIndex],
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          height: 70,
+          decoration: BoxDecoration(
+            color: Colors.black, // Continuous island look
+            borderRadius: BorderRadius.circular(35),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.moving_rounded),
-            label: 'Details',
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildNavItem(0, Icons.home_rounded),
+              _buildNavItem(1, Icons.moving_rounded),
+              _buildNavItem(2, Icons.person_rounded),
+            ],
           ),
-          NavigationDestination(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, IconData icon) {
+    bool isSelected = currentPageIndex == index;
+    return GestureDetector(
+      onTap: () => setState(() => currentPageIndex = index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFFDCD3FF) : Colors.transparent, // Pop out with pastel purple
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          color: isSelected ? Colors.black : Colors.white.withOpacity(0.5),
+          size: 28,
+        ),
       ),
     );
   }
