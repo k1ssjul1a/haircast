@@ -66,3 +66,5 @@ class HairScoreCalculator {
     return "$score/5";
   }
 }
+
+//
