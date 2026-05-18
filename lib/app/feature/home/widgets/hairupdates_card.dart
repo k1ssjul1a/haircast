@@ -108,3 +108,5 @@ class _HairupdatesCardState extends State<HairupdatesCard> {
     );
   }
 }
+
+//
