@@ -1,7 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:math';
+
+import '../../../data/service/database_service.dart';
+import '../../../data/service/hair_score_calculator.dart';
+import '../../../data/user_model.dart';
 
 class HaircastCard extends StatefulWidget {
   const HaircastCard({super.key});
@@ -19,6 +24,7 @@ class _HaircastCardState extends State<HaircastCard> {
   double? _rain;
   bool _isSunny = false;
   String _error = "";
+  UserModel? _user;
 
   // Pastel colors based on description
   final Color _pastelPurple = const Color(0xFFBA99EA);
@@ -46,6 +52,13 @@ class _HaircastCardState extends State<HaircastCard> {
     });
 
     try {
+      // Fetch User Data
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        _user = await DatabaseService().getUser(currentUser.uid);
+      }
+
+      // Fetch Weather Data
       final geoUrl = Uri.parse(
           'https://geocoding-api.open-meteo.com/v1/search?name=$_city&count=1&language=en&format=json');
       final geoResponse = await http.get(geoUrl);
@@ -68,7 +81,9 @@ class _HaircastCardState extends State<HaircastCard> {
               _temp = current['temperature_2m'];
               _windSpeed = current['wind_speed_10m'];
               _humidity = current['relative_humidity_2m'];
-              _rain = current['rain'] + current['showers'] + current['snowfall'];
+              _rain = (current['rain'] as num).toDouble() + 
+                      (current['showers'] as num).toDouble() + 
+                      (current['snowfall'] as num).toDouble();
               _isSunny = current['weather_code'] <= 1;
               _isLoading = false;
             });
@@ -128,6 +143,12 @@ class _HaircastCardState extends State<HaircastCard> {
 
   @override
   Widget build(BuildContext context) {
+    String hairScore = HairScoreCalculator.calculateScore(
+      user: _user,
+      humidity: _humidity?.toDouble(),
+      rain: _rain,
+    );
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       child: Card(
@@ -193,7 +214,7 @@ class _HaircastCardState extends State<HaircastCard> {
                       children: [
                         _FactorRow(icon: Icons.water_drop_outlined, label: "Humidity", value: "${_humidity ?? '--'}%"),
                         _FactorRow(icon: Icons.air_outlined, label: "Wind", value: "${_windSpeed ?? '--'} km/h"),
-                        _FactorRow(icon: Icons.umbrella_outlined, label: "Rain", value: _rain! > 0 ? "${_rain!.toStringAsFixed(1)} mm" : "None"),
+                        _FactorRow(icon: Icons.umbrella_outlined, label: "Rain", value: _rain != null && _rain! > 0 ? "${_rain!.toStringAsFixed(1)} mm" : "None"),
                         _FactorRow(icon: Icons.wb_sunny_outlined, label: "Sun", value: _isSunny ? "Sunny" : "Cloudy"),
                       ],
                     ),
@@ -214,9 +235,13 @@ class _HaircastCardState extends State<HaircastCard> {
                           style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
                         ),
                         const SizedBox(height: 4),
-                        const Text(
-                          "8/10",
-                          style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.black),
+                        Text(
+                          hairScore,
+                          style: TextStyle(
+                            fontSize: hairScore == "unknown" ? 24 : 32, 
+                            fontWeight: FontWeight.w900, 
+                            color: Colors.black
+                          ),
                         ),
                       ],
                     ),
