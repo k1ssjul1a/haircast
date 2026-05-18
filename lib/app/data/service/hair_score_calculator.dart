@@ -7,8 +7,6 @@ class HairScoreCalculator {
     required double? rain,
   }) {
     if (user == null || 
-        user.hairType.isEmpty || 
-        user.lastWashDate == null || 
         humidity == null || 
         rain == null) {
       return "unknown";
@@ -17,46 +15,46 @@ class HairScoreCalculator {
     int score = 5;
     final String hairType = user.hairType.toLowerCase();
     final int cycle = user.hairwashCycle;
-    final DateTime now = DateTime.now();
-    final int daysSinceWash = now.difference(user.lastWashDate!).inDays;
-
-    bool isStraightOrWavy = hairType.startsWith('1') || hairType.startsWith('2');
+    
     bool isCurlyOrCoily = hairType.startsWith('3') || hairType.startsWith('4');
 
-    if (isStraightOrWavy) {
-      // Hairwash cycle logic
-      if (daysSinceWash >= cycle) {
-        score -= 2;
-      } else if (daysSinceWash >= (cycle / 2)) {
-        score -= 1;
-      }
+    // Hairwash cycle logic - skip if lastWashDate is missing
+    if (user.lastWashDate != null) {
+      final DateTime now = DateTime.now();
+      final int daysSinceWash = now.difference(user.lastWashDate!).inDays;
 
-      // Weather logic
-      if (rain > 0) {
-        score -= 1;
+      if (isCurlyOrCoily) {
+        if (daysSinceWash >= cycle) {
+          score -= 2;
+        } else if (daysSinceWash >= (cycle * 2 / 3)) {
+          score -= 1;
+        }
+      } else {
+        // Default (Straight/Wavy/Normal)
+        if (daysSinceWash >= cycle) {
+          score -= 2;
+        } else if (daysSinceWash >= (cycle / 2)) {
+          score -= 1;
+        }
       }
-      if (humidity >= 80) {
-        score -= 1;
-      }
-    } else if (isCurlyOrCoily) {
-      // Hairwash cycle logic
-      if (daysSinceWash >= cycle) {
-        score -= 2;
-      } else if (daysSinceWash >= (cycle * 2 / 3)) {
-        score -= 1;
-      }
+    }
 
-      // Weather logic
-      if (rain > 0) {
-        score -= 1;
-      }
-      if (humidity >= 80) {
+    // Weather logic
+    if (rain > 0) {
+      score -= 1;
+    }
+
+    if (isCurlyOrCoily) {
+      if (humidity >= 75) {
         score -= 2;
-      } else if (humidity >= 60) {
+      } else if (humidity >= 55) {
         score -= 1;
       }
     } else {
-      return "unknown";
+      // Default (Straight/Wavy/Normal)
+      if (humidity >= 75) {
+        score -= 1;
+      }
     }
 
     // Ensure score is within 1-5
@@ -66,5 +64,3 @@ class HairScoreCalculator {
     return "$score/5";
   }
 }
-
-//
