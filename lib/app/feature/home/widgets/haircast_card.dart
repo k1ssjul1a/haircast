@@ -42,10 +42,10 @@ class _HaircastCardState extends State<HaircastCard> {
   void initState() {
     super.initState();
     _randomNote = _notes[Random().nextInt(_notes.length)];
-    _fetchWeatherData();
+    _fetchData();
   }
 
-  Future<void> _fetchWeatherData() async {
+  Future<void> _fetchData() async {
     setState(() {
       _isLoading = true;
       _error = "";
@@ -78,9 +78,9 @@ class _HaircastCardState extends State<HaircastCard> {
             final current = weatherData['current'];
 
             setState(() {
-              _temp = current['temperature_2m'];
-              _windSpeed = current['wind_speed_10m'];
-              _humidity = current['relative_humidity_2m'];
+              _temp = (current['temperature_2m'] as num).toDouble();
+              _windSpeed = (current['wind_speed_10m'] as num).toDouble();
+              _humidity = (current['relative_humidity_2m'] as num).toInt();
               _rain = (current['rain'] as num).toDouble() + 
                       (current['showers'] as num).toDouble() + 
                       (current['snowfall'] as num).toDouble();
@@ -132,7 +132,7 @@ class _HaircastCardState extends State<HaircastCard> {
                 _city = newCity;
               });
               Navigator.pop(context);
-              _fetchWeatherData();
+              _fetchData();
             },
             child: const Text("OK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
@@ -203,7 +203,6 @@ class _HaircastCardState extends State<HaircastCard> {
               else if (_error.isNotEmpty)
                 Center(child: Text("Error fetching data", style: TextStyle(color: Colors.black.withOpacity(0.5))))
               else ...[
-                  // Weather Box
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -220,7 +219,6 @@ class _HaircastCardState extends State<HaircastCard> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Score Box
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(14),
@@ -247,7 +245,6 @@ class _HaircastCardState extends State<HaircastCard> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Note Box
                   Container(
                     padding: const EdgeInsets.all(14),
                     width: double.infinity,
