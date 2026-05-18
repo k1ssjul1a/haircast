@@ -29,6 +29,15 @@ class UserInfos extends StatelessWidget {
         final userData = snapshot.data;
         final name = userData?.name ?? (currentUser.isAnonymous ? "Guest User" : "User Example");
         final hairType = userData?.hairType != null && userData!.hairType.isNotEmpty ? userData.hairType : "No hair type set";
+        final location = userData?.location;
+
+        String nextWashDisplay = "?";
+        if (userData?.lastWashDate != null) {
+          final nextWashDate = userData!.lastWashDate!.add(Duration(days: userData.hairwashCycle));
+          final today = DateTime.now();
+          final remaining = nextWashDate.difference(DateTime(today.year, today.month, today.day)).inDays;
+          nextWashDisplay = "$remaining Days";
+        }
 
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -62,7 +71,7 @@ class UserInfos extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    hairType,
+                    "Hair Type: $hairType",
                     style: TextStyle(fontSize: 16, color: Colors.black.withOpacity(0.6), fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
@@ -72,7 +81,7 @@ class UserInfos extends StatelessWidget {
                       const Icon(Icons.location_on, size: 16, color: Colors.black),
                       const SizedBox(width: 4),
                       Text(
-                        "Berlin, Germany",
+                        location ?? "No location set",
                         style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.bold),
                       ),
                     ],
@@ -90,7 +99,7 @@ class UserInfos extends StatelessWidget {
                         children: [
                           _InfoStat(label: "Wash Cycle", value: "${userData?.hairwashCycle ?? 1} Days"),
                           const VerticalDivider(thickness: 1, color: Colors.black12),
-                          //const _InfoStat(label: "Next Wash", value: "In 2 Days"),
+                          _InfoStat(label: "Next Wash", value: nextWashDisplay),
                         ],
                       ),
                     ),

@@ -7,6 +7,7 @@ class UserModel {
   final String hairType; // e.g., '1a', '2b', '4c'
   final int hairwashCycle; // in days
   final DateTime? lastWashDate;
+  final String location;
 
   UserModel({
     required this.id,
@@ -15,6 +16,7 @@ class UserModel {
     this.hairType = '',
     this.hairwashCycle = 3,
     this.lastWashDate,
+    this.location = '',
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data, String documentId) {
@@ -27,6 +29,7 @@ class UserModel {
       lastWashDate: data['lastWashDate'] != null
           ? (data['lastWashDate'] as Timestamp).toDate()
           : null,
+      location: data['location'] ?? '',
     );
   }
 
@@ -37,6 +40,7 @@ class UserModel {
       'hairType': hairType,
       'hairwashCycle': hairwashCycle,
       'lastWashDate': lastWashDate != null ? Timestamp.fromDate(lastWashDate!) : null,
+      'location': location,
     };
   }
 
@@ -45,6 +49,8 @@ class UserModel {
     String? email,
     String? hairType,
     int? hairwashCycle,
+    DateTime? lastWashDate,
+    String? location,
   }) {
     return UserModel(
       id: id,
@@ -52,7 +58,8 @@ class UserModel {
       email: email ?? this.email,
       hairType: hairType ?? this.hairType,
       hairwashCycle: hairwashCycle ?? this.hairwashCycle,
+      lastWashDate: lastWashDate ?? this.lastWashDate,
+      location: location ?? this.location,
     );
   }
 }
-

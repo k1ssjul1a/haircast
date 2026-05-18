@@ -17,7 +17,7 @@ class HaircastCard extends StatefulWidget {
 
 class _HaircastCardState extends State<HaircastCard> {
   bool _isLoading = true;
-  String _city = "Berlin"; // Default city
+  String _city = 'Wien'; // Default city
   double? _temp;
   double? _windSpeed;
   int? _humidity;
@@ -56,6 +56,9 @@ class _HaircastCardState extends State<HaircastCard> {
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
         _user = await DatabaseService().getUser(currentUser.uid);
+        if (_user != null && _user!.location.isNotEmpty) {
+          _city = _user!.location;
+        }
       }
 
       // Fetch Weather Data
@@ -214,7 +217,7 @@ class _HaircastCardState extends State<HaircastCard> {
                         _FactorRow(icon: Icons.water_drop_outlined, label: "Humidity", value: "${_humidity ?? '--'}%"),
                         _FactorRow(icon: Icons.air_outlined, label: "Wind", value: "${_windSpeed ?? '--'} km/h"),
                         _FactorRow(icon: Icons.umbrella_outlined, label: "Rain", value: _rain != null && _rain! > 0 ? "${_rain!.toStringAsFixed(1)} mm" : "None"),
-                        _FactorRow(icon: Icons.wb_sunny_outlined, label: "Sun", value: _isSunny ? "Sunny" : "Cloudy"),
+                        _FactorRow(icon: Icons.wb_sunny_outlined, label: "Sky", value: _isSunny ? "Sunny" : "Cloudy"),
                       ],
                     ),
                   ),
@@ -305,5 +308,3 @@ class _FactorRow extends StatelessWidget {
     );
   }
 }
-
-//

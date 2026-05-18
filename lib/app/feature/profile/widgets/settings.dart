@@ -48,6 +48,32 @@ class _SettingsState extends State<Settings> {
     );
   }
 
+  void _showLocationDialog(UserModel user) {
+    final controller = TextEditingController(text: user.location);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Change Location"),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(hintText: "Enter city"),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
+          TextButton(
+            onPressed: () async {
+              final updatedUser = user.copyWith(location: controller.text);
+              await _dbService.saveUser(updatedUser);
+              if (mounted) setState(() {});
+              Navigator.pop(context);
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showHairTypeDialog(UserModel user) {
     String selectedType = _hairTypes.contains(user.hairType) ? user.hairType : _hairTypes.first;
     showDialog(
@@ -82,6 +108,8 @@ class _SettingsState extends State<Settings> {
 
   void _showWashCycleDialog(UserModel user) {
     int selectedCycle = user.hairwashCycle;
+    DateTime? selectedDate = user.lastWashDate;
+
     showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -89,17 +117,52 @@ class _SettingsState extends State<Settings> {
           title: const Text("Change Hairwash Cycle"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Days between washes:"),
+              const Text("Days between washes:", style: TextStyle(fontWeight: FontWeight.bold)),
               DropdownButton<int>(
                 value: selectedCycle,
                 isExpanded: true,
-                items: List.generate(10, (index) => index + 1)
+                items: List.generate(14, (index) => index + 1)
                     .map((val) => DropdownMenuItem(value: val, child: Text("$val Days")))
                     .toList(),
                 onChanged: (value) {
                   if (value != null) setDialogState(() => selectedCycle = value);
                 },
+              ),
+              const SizedBox(height: 20),
+              const Text("Last wash date:", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: () async {
+                  final pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: selectedDate ?? DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime.now(),
+                  );
+                  if (pickedDate != null) {
+                    setDialogState(() => selectedDate = pickedDate);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade400),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        selectedDate == null
+                            ? "Select Date"
+                            : "${selectedDate!.day.toString().padLeft(2, '0')}/${selectedDate!.month.toString().padLeft(2, '0')}/${selectedDate!.year}",
+                      ),
+                      const Icon(Icons.calendar_today, size: 18),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -107,7 +170,10 @@ class _SettingsState extends State<Settings> {
             TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
             TextButton(
               onPressed: () async {
-                final updatedUser = user.copyWith(hairwashCycle: selectedCycle);
+                final updatedUser = user.copyWith(
+                  hairwashCycle: selectedCycle,
+                  lastWashDate: selectedDate,
+                );
                 await _dbService.saveUser(updatedUser);
                 if (mounted) setState(() {});
                 Navigator.pop(context);
@@ -120,6 +186,11 @@ class _SettingsState extends State<Settings> {
     );
   }
 
+  String _formatDate(DateTime? date) {
+    if (date == null) return "";
+    return "${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}";
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_uid == null) return const Center(child: Text("Please log in"));
@@ -128,6 +199,14 @@ class _SettingsState extends State<Settings> {
       future: _dbService.getUser(_uid!),
       builder: (context, snapshot) {
         final user = snapshot.data;
+        String washSubtitle = "";
+        if (user != null) {
+          washSubtitle = "${user.hairwashCycle} Days";
+          if (user.lastWashDate != null) {
+            washSubtitle += " • Last: ${_formatDate(user.lastWashDate)}";
+          }
+        }
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
           child: Card(
@@ -166,7 +245,8 @@ class _SettingsState extends State<Settings> {
                         _SettingsTile(
                           icon: Icons.location_on_outlined,
                           label: "Location (City)",
-                          onTap: () {},
+                          subtitle: user?.location,
+                          onTap: () => user != null ? _showLocationDialog(user) : null,
                         ),
                         _SettingsTile(
                           icon: Icons.email_outlined,
@@ -182,8 +262,8 @@ class _SettingsState extends State<Settings> {
                         ),
                         _SettingsTile(
                           icon: Icons.calendar_month,
-                          label: "Hairwash Cycle Days",
-                          subtitle: user != null ? "${user.hairwashCycle} Days" : null,
+                          label: "Hairwash Info",
+                          subtitle: washSubtitle,
                           onTap: () => user != null ? _showWashCycleDialog(user) : null,
                         ),
                         _SettingsTile(
@@ -275,7 +355,7 @@ class _SettingsTile extends StatelessWidget {
         label,
         style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Colors.black),
       ),
-      subtitle: subtitle != null
+      subtitle: (subtitle != null && subtitle!.isNotEmpty)
           ? Text(subtitle!, style: TextStyle(fontSize: 12, color: Colors.black.withOpacity(0.5)))
           : null,
       trailing: const Icon(Icons.chevron_right, color: Colors.black26),
