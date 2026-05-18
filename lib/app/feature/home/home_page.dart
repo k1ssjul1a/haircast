@@ -10,12 +10,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final firestoreService = FirestoreService();
 
     return Scaffold(
       appBar: AppBar(
-        // title: const Text("Hello [user]")
+        title: const Text("Haircast"),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 120),
@@ -29,6 +28,7 @@ class HomePage extends StatelessWidget {
                   hairstyle: hairstyle,
                   rating: rating.toInt(),
                   washDay: false,
+                  products: products,
                 );
               },
             ),

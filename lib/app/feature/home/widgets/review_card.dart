@@ -16,7 +16,6 @@ class ReviewCard extends StatefulWidget {
 class _ReviewCardState extends State<ReviewCard> {
   double _currentSliderValue = 3;
   String? _selectedHairstyle;
-
   final TextEditingController _productController = TextEditingController();
 
   final List<String> _hairstyles = [
@@ -43,6 +42,12 @@ class _ReviewCardState extends State<ReviewCard> {
       _selectedHairstyle!,
       _currentSliderValue,
       _productController.text,
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Saved successfully")),
     );
   }
 
@@ -117,8 +122,7 @@ class _ReviewCardState extends State<ReviewCard> {
                     ),
 
                     DropdownButtonFormField<String>(
-                      initialValue: _selectedHairstyle,
-                      dropdownColor: Colors.white,
+                      value: _selectedHairstyle,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[50],
@@ -148,7 +152,7 @@ class _ReviewCardState extends State<ReviewCard> {
               const SizedBox(height: 16),
 
               const Text(
-                "Photo",
+                "Products used",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
@@ -157,30 +161,9 @@ class _ReviewCardState extends State<ReviewCard> {
 
               const SizedBox(height: 6),
 
-              Container(
-                height: 120,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: Colors.black.withOpacity(0.05),
-                  ),
-                ),
-                child: const Icon(
-                  Icons.add_a_photo_outlined,
-                  color: Colors.black54,
-                  size: 40,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
               TextField(
                 controller: _productController,
                 decoration: InputDecoration(
-                  labelText: "Products used",
-                  labelStyle: const TextStyle(color: Colors.black54),
                   filled: true,
                   fillColor: Colors.white,
                   border: OutlineInputBorder(
