@@ -17,7 +17,6 @@ class UserModel {
     this.lastWashDate,
   });
 
-  // Wandelt ein Map (von Firestore) in ein Objekt um
   factory UserModel.fromMap(Map<String, dynamic> data, String documentId) {
     return UserModel(
       id: documentId,
@@ -25,13 +24,12 @@ class UserModel {
       email: data['email'] ?? '',
       hairType: data['hairType'] ?? '',
       hairwashCycle: data['hairwashCycle'] ?? 3,
-      lastWashDate: data['lastWashDate'] != null 
-          ? (data['lastWashDate'] as Timestamp).toDate() 
+      lastWashDate: data['lastWashDate'] != null
+          ? (data['lastWashDate'] as Timestamp).toDate()
           : null,
     );
   }
 
-  // Wandelt das Objekt in ein Map für Firestore um
   Map<String, dynamic> toMap() {
     return {
       'name': name,
@@ -40,6 +38,21 @@ class UserModel {
       'hairwashCycle': hairwashCycle,
       'lastWashDate': lastWashDate != null ? Timestamp.fromDate(lastWashDate!) : null,
     };
+  }
+
+  UserModel copyWith({
+    String? name,
+    String? email,
+    String? hairType,
+    int? hairwashCycle,
+  }) {
+    return UserModel(
+      id: id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      hairType: hairType ?? this.hairType,
+      hairwashCycle: hairwashCycle ?? this.hairwashCycle,
+    );
   }
 }
 

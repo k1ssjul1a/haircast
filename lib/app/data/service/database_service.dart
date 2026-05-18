@@ -17,5 +17,15 @@ class DatabaseService {
     }
     return null;
   }
+
+  // Stream für Echtzeit-Updates
+  Stream<UserModel?> watchUser(String uid) {
+    return _db.collection('users').doc(uid).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        return UserModel.fromMap(snapshot.data()!, snapshot.id);
+      }
+      return null;
+    });
+  }
 }
 
