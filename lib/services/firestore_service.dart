@@ -20,7 +20,7 @@ class FirestoreService {
   Future<void> saveHairEntry({
     String? hairstyle,
     required int rating,
-    required bool washDay,
+    bool? washDay,
     String? products,
     List<String>? achievementsEarned,
   }) async {
@@ -35,13 +35,18 @@ class FirestoreService {
         .collection('hairEntries')
         .doc(docId);
     
-    batch.set(entryRef, {
+    final Map<String, dynamic> data = {
       'date': Timestamp.fromDate(today),
       'hairstyle': hairstyle,
       'rating': rating,
-      'washDay': washDay,
       'products': products,
-    });
+    };
+    
+    if (washDay != null) {
+      data['washDay'] = washDay;
+    }
+
+    batch.set(entryRef, data, SetOptions(merge: true));
 
     if (achievementsEarned != null && achievementsEarned.isNotEmpty) {
       final userRef = _db.collection('users').doc(_uid);
@@ -50,6 +55,41 @@ class FirestoreService {
         updates['achievements.$achievement'] = FieldValue.increment(1);
       }
       batch.update(userRef, updates);
+    }
+
+    if (washDay == true) {
+      final userRef = _db.collection('users').doc(_uid);
+      batch.update(userRef, {'lastWashDate': Timestamp.fromDate(today)});
+    }
+
+    await batch.commit();
+  }
+
+  Future<void> updateHairUpdates({
+    required bool washedToday,
+    required bool newHaircut,
+    required bool changedColor,
+    String? notes,
+  }) async {
+    final today = DateTime.now();
+    final docId = _formatDate(today);
+    final userRef = _db.collection('users').doc(_uid);
+    final entryRef = userRef.collection('hairEntries').doc(docId);
+
+    final batch = _db.batch();
+
+    batch.set(entryRef, {
+      'date': Timestamp.fromDate(today),
+      'washDay': washedToday,
+      'newHaircut': newHaircut,
+      'changedColor': changedColor,
+      'notes': notes,
+    }, SetOptions(merge: true));
+
+    if (washedToday) {
+      batch.update(userRef, {
+        'lastWashDate': Timestamp.fromDate(today),
+      });
     }
 
     await batch.commit();

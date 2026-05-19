@@ -103,11 +103,27 @@ class _CalendarState extends State<Calendar> {
                       context: context,
                       builder: (_) => AlertDialog(
                         title: const Text("Hair Entry"),
-                        content: Text(
-                          "Hairstyle: ${entry['hairstyle']}\n"
-                              "Rating: ${entry['rating']}/5\n"
-                              "Notes: ${entry['products'] ?? '-'}",
+                        content: SingleChildScrollView(
+                          child: ListBody(
+                            children: [
+                              Text("Hairstyle: ${entry['hairstyle'] ?? 'N/A'}"),
+                              Text("Rating: ${entry['rating'] ?? 'N/A'}/5"),
+                              Text("Wash Day: ${entry['washDay'] == true ? 'Yes' : 'No'}"),
+                              if (entry['newHaircut'] == true) const Text("• Got a new haircut"),
+                              if (entry['changedColor'] == true) const Text("• Changed hair color"),
+                              const SizedBox(height: 8),
+                              Text("Notes (Rating): ${entry['products'] ?? '-'}"),
+                              if (entry['notes'] != null && entry['notes'].toString().isNotEmpty)
+                                Text("Notes (Updates): ${entry['notes']}"),
+                            ],
+                          ),
                         ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("Close"),
+                          ),
+                        ],
                       ),
                     );
                   },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../services/firestore_service.dart';
 
 class HairupdatesCard extends StatefulWidget {
   const HairupdatesCard({super.key});
@@ -8,14 +9,42 @@ class HairupdatesCard extends StatefulWidget {
 }
 
 class _HairupdatesCardState extends State<HairupdatesCard> {
+  final FirestoreService _firestoreService = FirestoreService();
+  final TextEditingController _notesController = TextEditingController();
+
   bool _washedToday = false;
   bool _newHaircut = false;
   bool _changedColor = false;
-  final int _daysSinceWash = 2; // Dummy data
 
   final Color _lightGrey = const Color(0xFFE5DFE6);
-  final Color _pastelPurple = const Color(0xFFBA99EA);
 
+  @override
+  void dispose() {
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveUpdates() async {
+    try {
+      await _firestoreService.updateHairUpdates(
+        washedToday: _washedToday,
+        newHaircut: _newHaircut,
+        changedColor: _changedColor,
+        notes: _notesController.text,
+      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Updates saved successfully!")),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Error saving updates: $e")),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +94,7 @@ class _HairupdatesCardState extends State<HairupdatesCard> {
               const SizedBox(height: 16),
               
               TextField(
+                controller: _notesController,
                 decoration: InputDecoration(
                   labelText: "Additional notes",
                   labelStyle: const TextStyle(color: Colors.black54),
@@ -78,7 +108,7 @@ class _HairupdatesCardState extends State<HairupdatesCard> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _saveUpdates,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
@@ -108,5 +138,3 @@ class _HairupdatesCardState extends State<HairupdatesCard> {
     );
   }
 }
-
-//
