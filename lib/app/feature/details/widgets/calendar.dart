@@ -15,7 +15,6 @@ class _CalendarState extends State<Calendar> {
   DateTime? _selectedDay;
 
   final FirestoreService _firestoreService = FirestoreService();
-  Map<String, dynamic>? _selectedEntry;
 
   final Color _pastelPurple = const Color(0xFFBA99EA);
   final Color _lightGrey = const Color(0xFFE5DFE6);
@@ -27,7 +26,9 @@ class _CalendarState extends State<Calendar> {
       child: Card(
         color: _lightGrey,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(32),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
@@ -41,13 +42,16 @@ class _CalendarState extends State<Calendar> {
                   Text(
                     "Calendar",
                     style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black),
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.black,
+                    ),
                   ),
                 ],
               ),
+
               const SizedBox(height: 24),
+
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
@@ -63,8 +67,10 @@ class _CalendarState extends State<Calendar> {
                   headerStyle: const HeaderStyle(
                     formatButtonVisible: false,
                     titleCentered: true,
-                    titleTextStyle:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    titleTextStyle: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
 
                   selectedDayPredicate: (day) {
@@ -72,41 +78,38 @@ class _CalendarState extends State<Calendar> {
                   },
 
                   onDaySelected: (selectedDay, focusedDay) async {
-                    if (!isSameDay(_selectedDay, selectedDay)) {
-                      setState(() {
-                        _selectedDay = selectedDay;
-                        _focusedDay = focusedDay;
-                        _selectedEntry = null;
-                      });
+                    setState(() {
+                      _selectedDay = selectedDay;
+                      _focusedDay = focusedDay;
+                    });
 
-                      final entry = await _firestoreService
-                          .getHairEntryByDate(selectedDay);
+                    final entry =
+                    await _firestoreService.getHairEntryByDate(selectedDay);
 
-                      setState(() {
-                        _selectedEntry = entry;
-                      });
+                    debugPrint("ENTRY: $entry");
 
-                      if (entry != null) {
-                        showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            title: const Text("Hair Entry"),
-                            content: Text(
-                              "Hairstyle: ${entry['hairstyle']}\n"
-                                  "Rating: ${entry['rating']}/5\n"
-                                  "Products: ${entry['products'] ?? '-'}",
-                            ),
-                          ),
-                        );
-                      } else {
-                        showDialog(
-                          context: context,
-                          builder: (_) => const AlertDialog(
-                            content: Text("No entry for this day."),
-                          ),
-                        );
-                      }
+                    if (!mounted) return;
+
+                    if (entry == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("No entry for this day"),
+                        ),
+                      );
+                      return;
                     }
+
+                    showDialog(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text("Hair Entry"),
+                        content: Text(
+                          "Hairstyle: ${entry['hairstyle']}\n"
+                              "Rating: ${entry['rating']}/5\n"
+                              "Products: ${entry['products'] ?? '-'}",
+                        ),
+                      ),
+                    );
                   },
 
                   onFormatChanged: (format) {
