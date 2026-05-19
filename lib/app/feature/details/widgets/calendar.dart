@@ -106,7 +106,7 @@ class _CalendarState extends State<Calendar> {
                         content: Text(
                           "Hairstyle: ${entry['hairstyle']}\n"
                               "Rating: ${entry['rating']}/5\n"
-                              "Products: ${entry['products'] ?? '-'}",
+                              "Notes: ${entry['products'] ?? '-'}",
                         ),
                       ),
                     );
