@@ -9,7 +9,8 @@ import '../../../data/service/hair_score_calculator.dart';
 import '../../../data/user_model.dart';
 
 class HaircastCard extends StatefulWidget {
-  const HaircastCard({super.key});
+  final Function(HairScoreResult, UserModel?)? onPredictionFetched;
+  const HaircastCard({super.key, this.onPredictionFetched});
 
   @override
   State<HaircastCard> createState() => _HaircastCardState();
@@ -90,6 +91,16 @@ class _HaircastCardState extends State<HaircastCard> {
               _isSunny = current['weather_code'] <= 1;
               _isLoading = false;
             });
+
+            if (widget.onPredictionFetched != null) {
+              final result = HairScoreCalculator.calculateScore(
+                user: _user,
+                humidity: _humidity?.toDouble(),
+                rain: _rain,
+                wind: _windSpeed,
+              );
+              widget.onPredictionFetched!(result, _user);
+            }
           } else {
             throw Exception("Failed to load weather data");
           }
@@ -146,11 +157,13 @@ class _HaircastCardState extends State<HaircastCard> {
 
   @override
   Widget build(BuildContext context) {
-    String hairScore = HairScoreCalculator.calculateScore(
+    HairScoreResult scoreResult = HairScoreCalculator.calculateScore(
       user: _user,
       humidity: _humidity?.toDouble(),
       rain: _rain,
+      wind: _windSpeed,
     );
+    String hairScoreDisplay = _user == null ? "unknown" : scoreResult.scoreDisplay;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -237,9 +250,9 @@ class _HaircastCardState extends State<HaircastCard> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          hairScore,
+                          hairScoreDisplay,
                           style: TextStyle(
-                            fontSize: hairScore == "unknown" ? 24 : 32, 
+                            fontSize: hairScoreDisplay == "unknown" ? 24 : 32,
                             fontWeight: FontWeight.w900, 
                             color: Colors.black
                           ),

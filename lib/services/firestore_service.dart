@@ -17,26 +17,41 @@ class FirestoreService {
   }
 
   Future<void> saveHairEntry({
-    required String hairstyle,
+    String? hairstyle,
     required int rating,
     required bool washDay,
-    required String products,
+    String? products,
+    List<String>? achievementsEarned,
   }) async {
     final today = DateTime.now();
     final docId = _formatDate(today);
 
-    await _db
+    final batch = _db.batch();
+    
+    final entryRef = _db
         .collection('users')
         .doc(_uid)
         .collection('hairEntries')
-        .doc(docId)
-        .set({
+        .doc(docId);
+    
+    batch.set(entryRef, {
       'date': Timestamp.fromDate(today),
       'hairstyle': hairstyle,
       'rating': rating,
       'washDay': washDay,
       'products': products,
     });
+
+    if (achievementsEarned != null && achievementsEarned.isNotEmpty) {
+      final userRef = _db.collection('users').doc(_uid);
+      final updates = <String, dynamic>{};
+      for (final achievement in achievementsEarned) {
+        updates['achievements.$achievement'] = FieldValue.increment(1);
+      }
+      batch.update(userRef, updates);
+    }
+
+    await batch.commit();
   }
 
   Future<Map<String, dynamic>?> getHairEntryByDate(DateTime date) async {
@@ -52,6 +67,13 @@ class FirestoreService {
     if (!doc.exists) return null;
     return doc.data();
   }
-}
 
-//
+  Stream<Map<String, int>> achievementsStream() {
+    return _db.collection('users').doc(_uid).snapshots().map((doc) {
+      final data = doc.data();
+      if (data == null || data['achievements'] == null) return {};
+      final Map<String, dynamic> achievements = data['achievements'];
+      return achievements.map((key, value) => MapEntry(key, value as int));
+    });
+  }
+}

@@ -4,9 +4,9 @@ class ReviewCard extends StatefulWidget {
   const ReviewCard({super.key, required this.onSave});
 
   final Future<void> Function(
-      String hairstyle,
+      String? hairstyle,
       double rating,
-      String products,
+      String? products,
       ) onSave;
 
   @override
@@ -36,12 +36,10 @@ class _ReviewCardState extends State<ReviewCard> {
   }
 
   Future<void> _handleSave() async {
-    if (_selectedHairstyle == null) return;
-
     await widget.onSave(
-      _selectedHairstyle!,
+      _selectedHairstyle,
       _currentSliderValue,
-      _productController.text,
+      _productController.text.isEmpty ? null : _productController.text,
     );
 
     if (!mounted) return;
@@ -122,8 +120,9 @@ class _ReviewCardState extends State<ReviewCard> {
                     ),
 
                     DropdownButtonFormField<String>(
-                      initialValue: _selectedHairstyle,
+                      value: _selectedHairstyle,
                       decoration: InputDecoration(
+                        hintText: "Select hairstyle (optional)",
                         filled: true,
                         fillColor: Colors.grey[50],
                         contentPadding:
@@ -151,39 +150,10 @@ class _ReviewCardState extends State<ReviewCard> {
 
               const SizedBox(height: 16),
 
-              //const Text(
-              //  "Products used",
-              //  style: TextStyle(
-              //    fontWeight: FontWeight.bold,
-              //   color: Colors.black,
-              //  ),
-              //),
-
-              //const SizedBox(height: 6),
-
-              //Container(
-              //  height: 120,
-              //  width: double.infinity,
-              //  decoration: BoxDecoration(
-              //    color: Colors.white.withOpacity(0.5),
-              //    borderRadius: BorderRadius.circular(24),
-              //    border: Border.all(
-              //      color: Colors.black.withOpacity(0.05),
-              //    ),
-              //  ),
-              //  child: const Icon(
-              //    Icons.add_a_photo_outlined,
-              //    color: Colors.black54,
-              //    size: 40,
-              //  ),
-              //),
-
-              //const SizedBox(height: 16),
-
               TextField(
                 controller: _productController,
                 decoration: InputDecoration(
-                  labelText: "Products used",
+                  labelText: "Additional notes (optional)",
                   labelStyle: const TextStyle(color: Colors.black54),
                   filled: true,
                   fillColor: Colors.white,
@@ -199,8 +169,7 @@ class _ReviewCardState extends State<ReviewCard> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                  _selectedHairstyle == null ? null : _handleSave,
+                  onPressed: _handleSave,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
@@ -223,5 +192,3 @@ class _ReviewCardState extends State<ReviewCard> {
     );
   }
 }
-
-//
