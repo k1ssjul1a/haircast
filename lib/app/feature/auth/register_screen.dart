@@ -111,14 +111,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Haircast"),
+        title: const Text(
+          "Welcome in Haircast!",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.black),
+        ),
+        centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
       extendBodyBehindAppBar: true,
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.only(top: 100, bottom: 40, left: 14, right: 14),
+          padding: const EdgeInsets.only(top: 120, bottom: 40, left: 14, right: 14),
           child: Card(
             color: _lightGrey,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
