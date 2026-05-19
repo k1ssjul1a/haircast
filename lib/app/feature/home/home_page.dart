@@ -14,14 +14,24 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Haircast"),
+        title: const Text(
+          "HAIRCAST",
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2,
+            color: Colors.black54,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 120),
+        padding: const EdgeInsets.only(top: 0, bottom: 120),
         child: Column(
           children: [
             const HaircastCard(),
-
             ReviewCard(
               onSave: (hairstyle, rating, products) async {
                 await firestoreService.saveHairEntry(
@@ -32,7 +42,6 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
-
             const HairupdatesCard(),
           ],
         ),
@@ -40,5 +49,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-//
