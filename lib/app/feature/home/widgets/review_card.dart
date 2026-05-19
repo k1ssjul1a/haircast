@@ -14,7 +14,7 @@ class ReviewCard extends StatefulWidget {
 }
 
 class _ReviewCardState extends State<ReviewCard> {
-  double _currentSliderValue = 3;
+  double _currentSliderValue = 5;
   String? _selectedHairstyle;
   final TextEditingController _productController = TextEditingController();
 
@@ -122,7 +122,7 @@ class _ReviewCardState extends State<ReviewCard> {
                     ),
 
                     DropdownButtonFormField<String>(
-                      value: _selectedHairstyle,
+                      initialValue: _selectedHairstyle,
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: Colors.grey[50],

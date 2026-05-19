@@ -196,7 +196,7 @@ class _SettingsState extends State<Settings> {
     if (_uid == null) return const Center(child: Text("Please log in"));
 
     return FutureBuilder<UserModel?>(
-      future: _dbService.getUser(_uid!),
+      future: _dbService.getUser(_uid),
       builder: (context, snapshot) {
         final user = snapshot.data;
         String washSubtitle = "";
