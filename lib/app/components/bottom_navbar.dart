@@ -62,7 +62,7 @@ class _BottomNavbarState extends State<BottomNavbar> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFFDCD3FF) : Colors.transparent, // Pop out with pastel purple
+          color: isSelected ? const Color(0xFFDCD3FF) : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: Icon(

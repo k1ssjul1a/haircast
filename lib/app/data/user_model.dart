@@ -8,6 +8,7 @@ class UserModel {
   final int hairwashCycle; // in days
   final DateTime? lastWashDate;
   final String location;
+  final Map<String, int> achievements;
 
   UserModel({
     required this.id,
@@ -17,9 +18,18 @@ class UserModel {
     this.hairwashCycle = 3,
     this.lastWashDate,
     this.location = '',
+    this.achievements = const {},
   });
 
   factory UserModel.fromMap(Map<String, dynamic> data, String documentId) {
+    Map<String, int> achievementsMap = {};
+    if (data['achievements'] != null && data['achievements'] is Map) {
+      final Map<dynamic, dynamic> rawAchievements = data['achievements'];
+      achievementsMap = rawAchievements.map(
+        (key, value) => MapEntry(key.toString(), (value as num).toInt()),
+      );
+    }
+
     return UserModel(
       id: documentId,
       name: data['name'] ?? '',
@@ -30,6 +40,7 @@ class UserModel {
           ? (data['lastWashDate'] as Timestamp).toDate()
           : null,
       location: data['location'] ?? '',
+      achievements: achievementsMap,
     );
   }
 
@@ -41,6 +52,7 @@ class UserModel {
       'hairwashCycle': hairwashCycle,
       'lastWashDate': lastWashDate != null ? Timestamp.fromDate(lastWashDate!) : null,
       'location': location,
+      'achievements': achievements,
     };
   }
 
@@ -51,6 +63,7 @@ class UserModel {
     int? hairwashCycle,
     DateTime? lastWashDate,
     String? location,
+    Map<String, int>? achievements,
   }) {
     return UserModel(
       id: id,
@@ -60,6 +73,7 @@ class UserModel {
       hairwashCycle: hairwashCycle ?? this.hairwashCycle,
       lastWashDate: lastWashDate ?? this.lastWashDate,
       location: location ?? this.location,
+      achievements: achievements ?? this.achievements,
     );
   }
 }

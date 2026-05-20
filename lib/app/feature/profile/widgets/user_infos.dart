@@ -39,6 +39,8 @@ class UserInfos extends StatelessWidget {
           nextWashDisplay = "$remaining Days";
         }
 
+        final totalAchievements = userData?.achievements.values.fold(0, (sum, count) => sum + count) ?? 0;
+
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
           child: Card(
@@ -100,6 +102,8 @@ class UserInfos extends StatelessWidget {
                           _InfoStat(label: "Wash Cycle", value: "${userData?.hairwashCycle ?? 1} Days"),
                           const VerticalDivider(thickness: 1, color: Colors.black12),
                           _InfoStat(label: "Next Wash", value: nextWashDisplay),
+                          const VerticalDivider(thickness: 1, color: Colors.black12),
+                          _InfoStat(label: "Achievements", value: "$totalAchievements"),
                         ],
                       ),
                     ),

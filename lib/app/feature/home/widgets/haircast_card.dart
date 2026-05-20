@@ -168,7 +168,7 @@ class _HaircastCardState extends State<HaircastCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
       child: Card(
-        color: _pastelPurple, // Using one of the 4 pastel colors for the card background
+        color: _pastelPurple,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
         child: Padding(
           padding: const EdgeInsets.all(24),

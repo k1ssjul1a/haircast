@@ -52,6 +52,7 @@ class FirestoreService {
       final userRef = _db.collection('users').doc(_uid);
       final updates = <String, dynamic>{};
       for (final achievement in achievementsEarned) {
+        // Use field paths to increment nested values without overwriting the map
         updates['achievements.$achievement'] = FieldValue.increment(1);
       }
       batch.update(userRef, updates);
@@ -113,8 +114,8 @@ class FirestoreService {
     return _db.collection('users').doc(_uid).snapshots().map((doc) {
       final data = doc.data();
       if (data == null || data['achievements'] == null) return {};
-      final Map<String, dynamic> achievements = data['achievements'];
-      return achievements.map((key, value) => MapEntry(key, value as int));
+      final Map<dynamic, dynamic> achievements = data['achievements'];
+      return achievements.map((key, value) => MapEntry(key.toString(), (value as num).toInt()));
     });
   }
 }

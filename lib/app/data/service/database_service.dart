@@ -6,7 +6,8 @@ class DatabaseService {
 
   // Benutzerdaten speichern oder aktualisieren
   Future<void> saveUser(UserModel user) async {
-    await _db.collection('users').doc(user.id).set(user.toMap());
+    // Use merge: true to avoid overwriting fields that might be updated by other services (like achievements)
+    await _db.collection('users').doc(user.id).set(user.toMap(), SetOptions(merge: true));
   }
 
   // Benutzerdaten abrufen
@@ -28,4 +29,3 @@ class DatabaseService {
     });
   }
 }
-
