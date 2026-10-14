@@ -1,17 +1,18 @@
-# haircast
+Get ready for good hair days.
 
-haircast
+Haircast is a Flutter app that predicts how your hair will behave on a given day. It combines live weather data with your personal hair routine and gives you a daily "Hair Score", so you know in advance whether to expect a good hair day or a bad one.
 
-## Getting Started
+Developed by Magdalena Wurz and Júlia Kiss in the course Smart App Development (summer semester 2026) at FH Upper Austria, Hagenberg Campus.
 
-This project is a starting point for a Flutter application.
+Features
+Daily Haircast: a predicted Hair Score for today, based on humidity, wind, rain, temperature and the time since your last wash
+Daily review: rate your hair day from 1 to 5 and add your hairstyle and notes
+Calendar: see your past Haircasts and ratings at a glance
+Achievements: small goals that reward regular use
+Profile & settings: hair type, wash cycle, location and account settings
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+How it works
+Haircast fetches the current weather for your location via the OpenWeather API.
+It combines the weather data with your hair routine, for example the days since your last wash.
+A rule-based logic with simple correlations calculates your Hair Score for the day.
+Your daily ratings are stored and are meant to improve future predictions.
